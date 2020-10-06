@@ -14,12 +14,12 @@ namespace RandomFiles
             output.Show( "----------------" );
 
             if (args.Length == 0) {
-                output.Show( "Error: You didn't set the source folder." );
+                output.Error( "You didn't set the source folder." );
                 return;
             }
 
             if (args.Contains("--help") || args.Contains("-h")) {
-                Console.WriteLine( Help.MainHelp() );
+                output.Show( Help.MainHelp() );
                 return;
             }
 
@@ -27,7 +27,12 @@ namespace RandomFiles
             string currentPath = Path.GetFullPath( "." );
             string source = args[0];
 
-            //if (Path.ex)
+            if ( !Directory.Exists(source) ) {
+                output.Error( "The source destination does not exist." );
+                return;
+            }
+
+            output.Show( Path.GetFullPath( source ) );
 
             string destination = currentPath;
 
