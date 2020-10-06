@@ -24,7 +24,6 @@ To delete:
 - The default size is 1024.
 - The size is in MB.
 - The default destination is current folder.
-
             ";
 
             return mainHelpText;
