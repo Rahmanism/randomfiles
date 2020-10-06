@@ -7,10 +7,15 @@ namespace RandomFiles
     {
         static void Main(string[] args)
         {
-            Console.WriteLine( "Hello World!" );
+            Console.WriteLine( "RandomFiles" );
+            Console.WriteLine( "----------------" );
+
             if (args.Contains("--help") || args.Contains("-h")) {
                 Console.WriteLine( Help.MainHelp() );
+                return;
             }
+
+
         }
     }
 }

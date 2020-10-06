@@ -17,12 +17,14 @@ Another function is to delete random files in the given path till it reaches the
 Syntax:
 
 To copy:
-    randomfiles <source_folder> <destination> [--size nn]
+    randomfiles <source_folder> [destination] [--size nn]
 To delete:
     randomfiles <source_folder> [--size nn] --delete
 
-The default size is 1024.
-The size is in MB.
+- The default size is 1024.
+- The size is in MB.
+- The default destination is current folder.
+
             ";
 
             return mainHelpText;
