@@ -53,7 +53,10 @@ namespace RandomFiles
                 try
                 {
                     currentFile = item.Path;
-                    File.Copy(item.Path, destination);
+                    File.Copy(item.Path,
+                        Path.Combine(
+                            destination,
+                            Path.GetFileName(item.Path)));
                 }
                 catch (Exception ex)
                 {

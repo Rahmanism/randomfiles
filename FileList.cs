@@ -75,19 +75,19 @@ namespace RandomFiles
             long totalSelectedSize = 0;
             var maxSize = size * 1048576; // to change it to bytes
             var maxTries = files.Count;
-            var tries = 1;
+            var tries = 0;
 
             while (selectedFiles.Count < files.Count &&
                 totalSelectedSize <= maxSize &&
                 tries <= maxTries)
             {
-                tries++;
                 int itemIndex = random.Next(files.Count);
                 FileItem item = files[itemIndex];
                 if (selectedFiles.Any(i => i.Path == item.Path))
                 {
                     continue;
                 }
+                tries++;
                 if ((totalSelectedSize + item.Size) <= maxSize)
                 {
                     selectedFiles.Add(item);

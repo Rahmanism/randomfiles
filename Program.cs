@@ -8,6 +8,13 @@ namespace RandomFiles
     class Program
     {
         const long DEFAULT_SIZE = 1024;
+        static readonly string[] ARG_SWITCHES =
+        {
+            "-h",
+            "--help",
+            "--size",
+            "--delete"
+        };
 
         static void Main(string[] args)
         {
@@ -28,12 +35,10 @@ namespace RandomFiles
                 return;
             }
 
-            string currentPath = Path.GetFullPath(".");
-
             string source = args[0];
             if (!Directory.Exists(source))
             {
-                output.Error("The source destination does not exist.");
+                output.Error("The source folder does not exist.");
                 return;
             }
             source = Path.GetFullPath(source);
@@ -48,15 +53,36 @@ namespace RandomFiles
 
             var fileOps = new FileOperations();
 
-            if (args.Contains("--delete"))
+            // DELETE
+            if (args.Contains("--delete")) 
             {
                 fileOps.DeleteFiles(selectedFiles);
                 output.Show("Delete is done.");
                 return;
             }
+            // COPY
+            else
+            {
+                string destination;
+                destination = (ARG_SWITCHES.Contains(args[1]))
+                    ? Path.GetFullPath(".") : args[1];
+                
+                if (!Directory.Exists(destination))
+                {
+                    output.Error("The destination folder does not exist.");
+                    return;
+                }
 
-            //string destination = currentPath;
+                if (source == destination)
+                {
+                    output.Error("Source and destination are the same.");
+                    return;
+                }
 
+                fileOps.CopyFiles(selectedFiles, destination);
+                output.Show("Copying is done.");
+                return;
+            }
         }
 
         /// <summary>
