@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RandomFiles": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\Mostafa\\AppData\\Local\\Temp\\t --delete --size 30"
+    }
+  }
+}
