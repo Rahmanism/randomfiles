@@ -18,83 +18,132 @@ namespace RandomFiles
             "--same-folder"
         };
 
-        static void Main(string[] args)
+        static string[] args;
+
+        static void Main(string[] mainArgs)
+        {
+            args = ArgsToLower(mainArgs);
+            Greeting();
+
+            if (!ReadyToContinue())
+                return;
+
+            string source = args[0];
+            source = Path.GetFullPath(source);
+
+            List<FileItem> selectedFiles =
+                GetSelectedFiles(source);
+
+            // DELETE
+            if (args.Contains("--delete"))
+            {
+                DoDelete(selectedFiles);
+            }
+            // COPY
+            else
+            {
+                DoCopy(source, selectedFiles);
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of files.
+        /// </summary>
+        /// <param name="source">Source path</param>
+        /// <returns>
+        /// Gets the list of files to operate on.
+        /// </returns>
+        private static List<FileItem> GetSelectedFiles(string source)
         {
             var output = new Output();
-            args = ArgsToLower(args);
 
-            output.Show("RandomFiles");
-            output.Show("----------------\n");
+            // size in MB
+            long size = GetSize(args, output);
+
+            string[] types = GetTypes();
+            var f = new FileList(source);
+            f.LoadFilesList(types);
+
+            return f.GetRandomFileList(size);
+        }
+
+        /// <summary>
+        /// Checks if program should continue to main operations
+        /// or stop because of lacking some args or just showing help.
+        /// </summary>
+        /// <returns>
+        /// True if there's no problem to continue
+        /// False if it has help switch, or there's no source path.
+        /// </returns>
+        private static bool ReadyToContinue()
+        {
+            var output = new Output();
 
             if (args.Contains("--help") || args.Contains("-h"))
             {
                 output.Show(Help.MainHelp());
-                return;
+                return false;
             }
 
             if (args.Length == 0)
             {
                 output.Error("You didn't set the source folder.");
-                return;
+                return false;
             }
 
-            string source = args[0];
-            if (!Directory.Exists(source))
+            if (!Directory.Exists(args[0]))
             {
                 output.Error("The source folder does not exist.");
-                return;
+                return false;
             }
-            source = Path.GetFullPath(source);
 
-            // size in MB
-            long size = GetSize(args, output);
+            return true;
+        }
 
-            string[] types = GetTypes(args, output);
-            var f = new FileList(source);
-            f.LoadFilesList(types);
-
-            List<FileItem> selectedFiles = f.GetRandomFileList(size);
-
+        private static void DoDelete(List<FileItem> selectedFiles)
+        {
+            var output = new Output();
             var fileOps = new FileOperations();
+            fileOps.DeleteFiles(selectedFiles);
+            output.Show("Delete is done.");
+        }
 
-            // DELETE
-            if (args.Contains("--delete"))
+        private static void DoCopy(string source, List<FileItem> selectedFiles)
+        {
+            var output = new Output();
+            var fileOps = new FileOperations();
+            string destination = (ARG_SWITCHES.Contains(args[1]))
+                ? Path.GetFullPath(".") : args[1];
+
+            if (!Directory.Exists(destination))
             {
-                fileOps.DeleteFiles(selectedFiles);
-                output.Show("Delete is done.");
+                output.Error("The destination folder does not exist.");
                 return;
             }
-            // COPY
-            else
+
+            if (source == destination)
             {
-                string destination;
-                destination = (ARG_SWITCHES.Contains(args[1]))
-                    ? Path.GetFullPath(".") : args[1];
-
-                if (!Directory.Exists(destination))
-                {
-                    output.Error("The destination folder does not exist.");
-                    return;
-                }
-
-                if (source == destination)
-                {
-                    output.Error("Source and destination are the same.");
-                    return;
-                }
-
-                bool sameFolder = args.Contains("--same-folder");
-
-                fileOps.CopyFiles(
-                    selectedFiles, destination, sameFolder, source);
-                output.Show("Copying is done.");
+                output.Error("Source and destination are the same.");
                 return;
             }
+
+            bool sameFolder = args.Contains("--same-folder");
+
+            fileOps.CopyFiles(
+                selectedFiles, destination, sameFolder, source);
+            output.Show("Copying is done.");
+        }
+
+        private static void Greeting()
+        {
+            var output = new Output();
+            output.Show("RandomFiles");
+            output.Show("----------------\n");
         }
 
         private static string[] ArgsToLower(string[] args)
         {
-            for (int i =0; i < args.Length; i++)
+            for (int i = 0; i < args.Length; i++)
             {
                 args[i] = args[i].ToLower();
             }
@@ -131,11 +180,14 @@ namespace RandomFiles
         /// <summary>
         /// Gets the file extensions from args.
         /// </summary>
-        /// <param name="args"></param>
-        /// <param name="output"></param>
-        /// <returns></returns>
-        private static string[] GetTypes(string[] args, Output output)
+        /// <returns>
+        /// Array of string that includes file extensions
+        /// or an array with zero length.
+        /// </returns>
+        private static string[] GetTypes()
         {
+            var output = new Output();
+
             int typesParamIndex = Array.IndexOf(args, "--type");
             if (typesParamIndex >= 0)
             {
