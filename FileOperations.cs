@@ -6,28 +6,25 @@ namespace RandomFiles
 {
     class FileOperations
     {
-        private int numberOfDoneFiles;
-        private string currentFile;
-
-        public int NumberOfDoneFiles { get => numberOfDoneFiles; }
-        public string CurrentFile { get => currentFile; }
+        public int NumberOfDoneFiles { get; private set; }
+        public string CurrentFile { get; private set; }
 
         public FileOperations()
         {
-            numberOfDoneFiles = 0;
-            currentFile = "";
+            NumberOfDoneFiles = 0;
+            CurrentFile = "";
         }
 
         public void DeleteFiles(List<FileItem> files)
         {
-            numberOfDoneFiles = 0;
+            NumberOfDoneFiles = 0;
             var output = new Output();
 
-            files.ForEach(item =>
+            files.ForEach((Action<FileItem>)(item =>
             {
                 try
                 {
-                    currentFile = item.Path;
+                    this.CurrentFile = item.Path;
                     File.Delete(item.Path);
                 }
                 catch (Exception ex)
@@ -37,22 +34,21 @@ namespace RandomFiles
                 }
                 finally
                 {
-                    numberOfDoneFiles++;
+                    NumberOfDoneFiles++;
                 }
-
-            });
+            }));
         }
 
         public void CopyFiles(List<FileItem> files, string destination)
         {
-            numberOfDoneFiles = 0;
+            NumberOfDoneFiles = 0;
             var output = new Output();
 
-            files.ForEach(item =>
+            files.ForEach((Action<FileItem>)(item =>
             {
                 try
                 {
-                    currentFile = item.Path;
+                    this.CurrentFile = item.Path;
                     File.Copy(item.Path,
                         Path.Combine(
                             destination,
@@ -65,9 +61,9 @@ namespace RandomFiles
                 }
                 finally
                 {
-                    numberOfDoneFiles++;
+                    NumberOfDoneFiles++;
                 }
-            });
+            }));
         }
     }
 }

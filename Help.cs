@@ -17,7 +17,13 @@ Another function is to delete random files in the given path till it reaches the
 Syntax:
 
 To copy:
-    randomfiles <source_folder> [destination] [--size nn]
+    randomfiles <source_folder> [destination] [--size nn] [--type <type1,type2...>]
+
+You can set the type of files by file extension using --type switch.
+Example:
+    randomfiles music d:\ --size 500 --type mp3,ogg
+
+
 To delete:
     randomfiles <source_folder> [--size nn] --delete
 

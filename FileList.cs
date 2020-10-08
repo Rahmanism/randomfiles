@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace RandomFiles
 {
@@ -17,7 +16,7 @@ namespace RandomFiles
             files = new List<FileItem>();
         }
 
-        public void LoadFilesList()
+        public void LoadFilesList(string[] types)
         {
             files = new List<FileItem>();
 
@@ -27,7 +26,7 @@ namespace RandomFiles
                     "The source destination does not exist.");
             }
 
-            GetChildren(sourcePath);
+            GetChildren(sourcePath, types);
 
             if (files.Count < 1)
             {
@@ -35,25 +34,47 @@ namespace RandomFiles
             }
         }
 
-        private void GetChildren(string dir)
+        /// <summary>
+        /// Fills the "files" with the files of a folder with search pattern.
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <param name="pattern"></param>
+        private void GetFilesOfDir(string dir, string pattern)
+        {
+            foreach (string f in Directory.GetFiles(
+                dir, pattern, SearchOption.AllDirectories))
+            {
+                var info = new FileInfo(f);
+                files.Add(new FileItem
+                {
+                    Path = f,
+                    Size = info.Length
+                });
+            }
+        }
+
+        /// <summary>
+        /// Fills the "files" of the given directory.
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <param name="types">Some file exts like mp3, jpg, etc.</param>
+        private void GetChildren(string dir, string[] types)
         {
             try
             {
-                foreach (string f in Directory.GetFiles(dir))
+                if (types.Length > 0)
                 {
-                    var info = new FileInfo(f);
-                    files.Add(new FileItem
+                    foreach (var type in types)
                     {
-                        Path = f,
-                        Size = info.Length
-                    });
+                        GetFilesOfDir(dir, $"*.{type}");
+                    }
                 }
-                foreach (string d in Directory.GetDirectories(dir))
+                else
                 {
-                    GetChildren(d);
+                    GetFilesOfDir(dir, "");
                 }
             }
-            catch {}
+            catch { }
         }
 
         /// <summary>
@@ -68,7 +89,7 @@ namespace RandomFiles
             var selectedFiles = new List<FileItem>();
             if (files.Count < 1)
             {
-                LoadFilesList();
+                throw new Exception("No file is selected.");
             }
 
             var random = new Random();

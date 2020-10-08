@@ -13,7 +13,8 @@ namespace RandomFiles
             "-h",
             "--help",
             "--size",
-            "--delete"
+            "--delete",
+            "--type"
         };
 
         static void Main(string[] args)
@@ -46,15 +47,16 @@ namespace RandomFiles
             // size in MB
             long size = GetSize(args, output);
 
+            string[] types = GetTypes(args, output);
             var f = new FileList(source);
-            f.LoadFilesList();
+            f.LoadFilesList(types);
 
             List<FileItem> selectedFiles = f.GetRandomFileList(size);
 
             var fileOps = new FileOperations();
 
             // DELETE
-            if (args.Contains("--delete")) 
+            if (args.Contains("--delete"))
             {
                 fileOps.DeleteFiles(selectedFiles);
                 output.Show("Delete is done.");
@@ -66,7 +68,7 @@ namespace RandomFiles
                 string destination;
                 destination = (ARG_SWITCHES.Contains(args[1]))
                     ? Path.GetFullPath(".") : args[1];
-                
+
                 if (!Directory.Exists(destination))
                 {
                     output.Error("The destination folder does not exist.");
@@ -109,6 +111,34 @@ namespace RandomFiles
             }
 
             return size;
+        }
+
+        /// <summary>
+        /// Gets the file extensions from args.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
+        private static string[] GetTypes(string[] args, Output output)
+        {
+            int typesParamIndex = Array.IndexOf(args, "--type");
+            if (typesParamIndex >= 0)
+            {
+                try
+                {
+                    var types = args[typesParamIndex + 1].Split(",");
+                    return types;
+                }
+                catch (Exception ex)
+                {
+                    output.Error(ex.Message);
+                    throw new Exception("We have a problem with types!");
+                }
+            }
+            else
+            {
+                return new string[0];
+            }
         }
     }
 }
