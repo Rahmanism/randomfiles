@@ -14,12 +14,14 @@ namespace RandomFiles
             "--help",
             "--size",
             "--delete",
-            "--type"
+            "--type",
+            "--same-folder"
         };
 
         static void Main(string[] args)
         {
             var output = new Output();
+            args = ArgsToLower(args);
 
             output.Show("RandomFiles");
             output.Show("----------------\n");
@@ -81,10 +83,23 @@ namespace RandomFiles
                     return;
                 }
 
-                fileOps.CopyFiles(selectedFiles, destination);
+                bool sameFolder = args.Contains("--same-folder");
+
+                fileOps.CopyFiles(
+                    selectedFiles, destination, sameFolder, source);
                 output.Show("Copying is done.");
                 return;
             }
+        }
+
+        private static string[] ArgsToLower(string[] args)
+        {
+            for (int i =0; i < args.Length; i++)
+            {
+                args[i] = args[i].ToLower();
+            }
+
+            return args;
         }
 
         /// <summary>
