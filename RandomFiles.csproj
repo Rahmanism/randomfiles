@@ -3,6 +3,14 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <StartupObject>RandomFiles.Program</StartupObject>
+    <Version>1.0.1</Version>
+    <Authors>Rahmanism</Authors>
+    <Company>Rahmanism</Company>
+    <Description>Copies and deletes files randomly with the given size and file extensions.</Description>
+    <Copyright></Copyright>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
+    <FileVersion>1.0.2</FileVersion>
   </PropertyGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 {
     class Output
     {
-        public void Show(string msg)
+        public void Show(string msg = "")
         {
             System.Console.WriteLine( msg );
         }

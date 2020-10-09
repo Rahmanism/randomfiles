@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace RandomFiles
 {
@@ -43,29 +43,39 @@ namespace RandomFiles
             // DELETE
             if (args.Contains("--delete"))
             {
-                var output = new Output();
-                Thread t = new Thread(new ThreadStart(DoDelete));
-                t.Start();
-                while (t.IsAlive)
-                {
-                    ShowProgress();
-                }
-                output.Show("");
-                output.Show("Delete is done.");
+                DoDeleteThread();
             }
             // COPY
             else
             {
-                var output = new Output();
-                Thread t = new Thread(new ThreadStart(DoCopy));
-                t.Start();
-                while (t.IsAlive)
-                {
-                    ShowProgress();
-                }
-                output.Show("");
-                output.Show("Copying is done.");
+                DoCopyThread();
             }
+        }
+
+        private static void DoDeleteThread()
+        {
+            var output = new Output();
+            Thread t = new Thread(new ThreadStart(DoDelete));
+            t.Start();
+            while (t.IsAlive)
+            {
+                ShowProgress();
+            }
+            output.Show();
+            output.Show("Delete is done.");
+        }
+
+        private static void DoCopyThread()
+        {
+            var output = new Output();
+            Thread t = new Thread(new ThreadStart(DoCopy));
+            t.Start();
+            while (t.IsAlive)
+            {
+                ShowProgress();
+            }
+            output.Show();
+            output.Show("Copying is done.");
         }
 
         private static void ShowProgress()
@@ -78,7 +88,7 @@ namespace RandomFiles
             string msg = $"{percentage}% " +
                 $"{fileOps.DoneFilesCount}/{selectedFiles.Count} - " +
                 $" Size: {fileOps.DoneFilesSize / 1048576}MB" +
-                $" - Current file: {fileName}";
+                $" - {fileName}";
             msg = msg.Length > MaxMessageLength
                 ? msg.Substring(0, MaxMessageLength) + "..."
                 : msg + new String(' ', MaxMessageLength - msg.Length + 3);
@@ -175,7 +185,11 @@ namespace RandomFiles
         {
             var output = new Output();
             output.Show("RandomFiles");
-            output.Show("----------------\n");
+            output.Show("----------------");
+            string version =
+                Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            output.Show($"Version: {version}");
+            output.Show();
         }
 
         private static string[] ArgsToLower(string[] args)
