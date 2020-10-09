@@ -6,18 +6,21 @@ namespace RandomFiles
 {
     class FileOperations
     {
-        public int NumberOfDoneFiles { get; private set; }
+        public int DoneFilesCount { get; private set; }
         public string CurrentFile { get; private set; }
+        public long DoneFilesSize { get; private set; }
 
         public FileOperations()
         {
-            NumberOfDoneFiles = 0;
+            DoneFilesCount = 0;
             CurrentFile = "";
+            DoneFilesSize = 0;
         }
 
         public void DeleteFiles(List<FileItem> files)
         {
-            NumberOfDoneFiles = 0;
+            DoneFilesCount = 0;
+            DoneFilesSize = 0;
             var output = new Output();
 
             files.ForEach((Action<FileItem>)(item =>
@@ -34,7 +37,8 @@ namespace RandomFiles
                 }
                 finally
                 {
-                    NumberOfDoneFiles++;
+                    DoneFilesCount++;
+                    DoneFilesSize += item.Size;
                 }
             }));
         }
@@ -58,7 +62,8 @@ namespace RandomFiles
             bool sameFolder,
             string sourcePath = "")
         {
-            NumberOfDoneFiles = 0;
+            DoneFilesCount = 0;
+            DoneFilesSize = 0;
             var output = new Output();
 
             files.ForEach((Action<FileItem>)(item =>
@@ -68,7 +73,7 @@ namespace RandomFiles
                     CurrentFile = item.Path;
 
                     string destDir = destination;
-                    
+
                     if (!sameFolder)
                     {
                         string relativeDestDir = Path.GetRelativePath(
@@ -94,7 +99,8 @@ namespace RandomFiles
                 }
                 finally
                 {
-                    NumberOfDoneFiles++;
+                    DoneFilesCount++;
+                    DoneFilesSize += item.Size;
                 }
             }));
         }

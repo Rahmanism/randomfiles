@@ -7,6 +7,11 @@
             System.Console.WriteLine( msg );
         }
 
+        public void ShowSameLine(string msg)
+        {
+            System.Console.Write( $"\r{msg}" );
+        }
+
         public void Error(string msg)
         {
             System.Console.WriteLine( $"Error: {msg}" );

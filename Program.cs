@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RandomFiles
 {
@@ -20,6 +22,10 @@ namespace RandomFiles
 
         static string[] args;
 
+        static string source;
+        static FileOperations fileOps;
+        static List<FileItem> selectedFiles;
+
         static void Main(string[] mainArgs)
         {
             args = ArgsToLower(mainArgs);
@@ -28,22 +34,56 @@ namespace RandomFiles
             if (!ReadyToContinue())
                 return;
 
-            string source = args[0];
+            source = args[0];
             source = Path.GetFullPath(source);
 
-            List<FileItem> selectedFiles =
-                GetSelectedFiles(source);
+            selectedFiles = GetSelectedFiles(source);
+            fileOps = new FileOperations();
 
             // DELETE
             if (args.Contains("--delete"))
             {
-                DoDelete(selectedFiles);
+                var output = new Output();
+                Thread t = new Thread(new ThreadStart(DoDelete));
+                t.Start();
+                while (t.IsAlive)
+                {
+                    ShowProgress();
+                }
+                output.Show("");
+                output.Show("Delete is done.");
             }
             // COPY
             else
             {
-                DoCopy(source, selectedFiles);
+                var output = new Output();
+                Thread t = new Thread(new ThreadStart(DoCopy));
+                t.Start();
+                while (t.IsAlive)
+                {
+                    ShowProgress();
+                }
+                output.Show("");
+                output.Show("Copying is done.");
             }
+        }
+
+        private static void ShowProgress()
+        {
+            var output = new Output();
+            const int MaxMessageLength = 76;
+            int percentage = fileOps.DoneFilesCount * 100
+                 / selectedFiles.Count;
+            string fileName = Path.GetFileName(fileOps.CurrentFile);
+            string msg = $"{percentage}% " +
+                $"{fileOps.DoneFilesCount}/{selectedFiles.Count} - " +
+                $" Size: {fileOps.DoneFilesSize / 1048576}MB" +
+                $" - Current file: {fileName}";
+            msg = msg.Length > MaxMessageLength
+                ? msg.Substring(0, MaxMessageLength) + "..."
+                : msg + new String(' ', MaxMessageLength - msg.Length + 3);
+            output.ShowSameLine(msg);
+            Thread.Sleep(20);
         }
 
         /// <summary>
@@ -100,18 +140,16 @@ namespace RandomFiles
             return true;
         }
 
-        private static void DoDelete(List<FileItem> selectedFiles)
+        private static void DoDelete()
         {
             var output = new Output();
             var fileOps = new FileOperations();
             fileOps.DeleteFiles(selectedFiles);
-            output.Show("Delete is done.");
         }
 
-        private static void DoCopy(string source, List<FileItem> selectedFiles)
+        private static void DoCopy()
         {
             var output = new Output();
-            var fileOps = new FileOperations();
             string destination = (ARG_SWITCHES.Contains(args[1]))
                 ? Path.GetFullPath(".") : args[1];
 
@@ -131,7 +169,6 @@ namespace RandomFiles
 
             fileOps.CopyFiles(
                 selectedFiles, destination, sameFolder, source);
-            output.Show("Copying is done.");
         }
 
         private static void Greeting()
