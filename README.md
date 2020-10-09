@@ -1,6 +1,6 @@
 # RandomFiles
 
-There was a feature in Windows Media Player that let user to set a size (e.g. 1GB), and set the destination (e.g. flash-memory), and it copied that size of randomly selected music files to that destination. Nowadays I don't use the Windows Media Player, so I thought I should write a small app to do it for myself. This is the result of that thought!
+There was a feature in Windows Media Player that let user to set a size (e.g. 1GB), and set the destination (e.g. flash-memory), and it copied that size of randomly selected music files to the specified destination. Nowadays I don't use the Windows Media Player, so I thought I should write a small app to do it for myself. This is the result of that thought!
 
 ---
 
