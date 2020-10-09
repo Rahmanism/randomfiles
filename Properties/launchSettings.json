@@ -2,7 +2,7 @@
   "profiles": {
     "RandomFiles": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\Mostafa\\AppData\\Local\\Temp\\t C:\\Users\\Mostafa\\source\\randomfiles\\bin\\Debug\\netcoreapp3.1\\test --size 30 --type mp3,aac"
+      "commandLineArgs": "C:\\Users\\Mostafa\\source\\randomfiles\\bin\\Debug\\netcoreapp3.1\\test --size 600 --delete"
     }
   }
 }

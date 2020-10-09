@@ -7,6 +7,9 @@
             System.Console.WriteLine( msg );
         }
 
+        /// <summary>
+        /// Shows the msg on the same line where the cursor is.
+        /// </summary>
         public void ShowSameLine(string msg)
         {
             System.Console.Write( $"\r{msg}" );

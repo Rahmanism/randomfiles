@@ -17,7 +17,8 @@ namespace RandomFiles
             "--size",
             "--delete",
             "--type",
-            "--same-folder"
+            "--same-folder",
+            "--keep-empty-folders"
         };
 
         static string[] args;
@@ -25,10 +26,12 @@ namespace RandomFiles
         static string source;
         static FileOperations fileOps;
         static List<FileItem> selectedFiles;
+        static Output output;
 
         static void Main(string[] mainArgs)
         {
             args = ArgsToLower(mainArgs);
+            output = new Output();
             Greeting();
 
             if (!ReadyToContinue())
@@ -39,6 +42,8 @@ namespace RandomFiles
 
             selectedFiles = GetSelectedFiles(source);
             fileOps = new FileOperations();
+            fileOps.Source = source;
+            fileOps.KeepEmptyFolders = args.Contains("--keep-empty-folders");
 
             // DELETE
             if (args.Contains("--delete"))
@@ -54,7 +59,6 @@ namespace RandomFiles
 
         private static void DoDeleteThread()
         {
-            var output = new Output();
             Thread t = new Thread(new ThreadStart(DoDelete));
             t.Start();
             while (t.IsAlive)
@@ -67,7 +71,6 @@ namespace RandomFiles
 
         private static void DoCopyThread()
         {
-            var output = new Output();
             Thread t = new Thread(new ThreadStart(DoCopy));
             t.Start();
             while (t.IsAlive)
@@ -80,7 +83,6 @@ namespace RandomFiles
 
         private static void ShowProgress()
         {
-            var output = new Output();
             const int MaxMessageLength = 76;
             int percentage = fileOps.DoneFilesCount * 100
                  / selectedFiles.Count;
@@ -105,8 +107,6 @@ namespace RandomFiles
         /// </returns>
         private static List<FileItem> GetSelectedFiles(string source)
         {
-            var output = new Output();
-
             // size in MB
             long size = GetSize(args, output);
 
@@ -127,8 +127,6 @@ namespace RandomFiles
         /// </returns>
         private static bool ReadyToContinue()
         {
-            var output = new Output();
-
             if (args.Contains("--help") || args.Contains("-h"))
             {
                 output.Show(Help.MainHelp());
@@ -152,14 +150,11 @@ namespace RandomFiles
 
         private static void DoDelete()
         {
-            var output = new Output();
-            var fileOps = new FileOperations();
             fileOps.DeleteFiles(selectedFiles);
         }
 
         private static void DoCopy()
         {
-            var output = new Output();
             string destination = (ARG_SWITCHES.Contains(args[1]))
                 ? Path.GetFullPath(".") : args[1];
 
@@ -183,7 +178,6 @@ namespace RandomFiles
 
         private static void Greeting()
         {
-            var output = new Output();
             output.Show("RandomFiles");
             output.Show("----------------");
             string version =
@@ -237,8 +231,6 @@ namespace RandomFiles
         /// </returns>
         private static string[] GetTypes()
         {
-            var output = new Output();
-
             int typesParamIndex = Array.IndexOf(args, "--type");
             if (typesParamIndex >= 0)
             {

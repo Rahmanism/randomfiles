@@ -30,7 +30,12 @@ Example:
 
 
 To delete:
-    randomfiles <source_folder> [--size nn] --delete
+    randomfiles <source_folder> [--size nn] --delete [--keep-empty-folders]
+
+--keep-empty-folders:
+    It will keeps the empty folders after deleting all files in a folder.
+    By default if a folder becomes empty after deleting its files, the folder will be deleted.
+
 
 - The default size is 1024.
 - The size is in MB.

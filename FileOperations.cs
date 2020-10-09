@@ -10,6 +10,9 @@ namespace RandomFiles
         public string CurrentFile { get; private set; }
         public long DoneFilesSize { get; private set; }
 
+        public string Source { get; set; }
+        public bool KeepEmptyFolders { get; set; }
+
         public FileOperations()
         {
             DoneFilesCount = 0;
@@ -29,6 +32,22 @@ namespace RandomFiles
                 {
                     CurrentFile = item.Path;
                     File.Delete(item.Path);
+                    if (!KeepEmptyFolders)
+                    {
+                        var dir = Path.GetDirectoryName(item.Path);
+                        while (dir != Source)
+                        {
+                            bool empty =
+                                Directory.GetFiles(
+                                    dir, "",
+                                    SearchOption.AllDirectories).Length < 1;
+                            if (empty)
+                            {
+                                Directory.Delete(dir, true);
+                            }
+                            dir = Path.GetFullPath(Path.Combine(dir, ".."));
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {

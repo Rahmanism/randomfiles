@@ -9,8 +9,8 @@
     <Company>Rahmanism</Company>
     <Description>Copies and deletes files randomly with the given size and file extensions.</Description>
     <Copyright></Copyright>
-    <AssemblyVersion>1.0.2</AssemblyVersion>
-    <FileVersion>1.0.2</FileVersion>
+    <AssemblyVersion>1.1.4</AssemblyVersion>
+    <FileVersion>1.1.2</FileVersion>
   </PropertyGroup>
 
 </Project>
