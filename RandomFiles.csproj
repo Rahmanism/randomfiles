@@ -2,15 +2,15 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <StartupObject>RandomFiles.Program</StartupObject>
-    <Version>1.0.1</Version>
+    <Version>1.1.1.5</Version>
     <Authors>Rahmanism</Authors>
     <Company>Rahmanism</Company>
     <Description>Copies and deletes files randomly with the given size and file extensions.</Description>
     <Copyright></Copyright>
-    <AssemblyVersion>1.1.4</AssemblyVersion>
-    <FileVersion>1.1.2</FileVersion>
+    <AssemblyVersion>1.1.1.5</AssemblyVersion>
+    <FileVersion>1.1.1.3</FileVersion>
   </PropertyGroup>
 
 </Project>
